@@ -11,7 +11,7 @@
 #define THREADPOOL_CONFIG_H
 
 #ifndef THREADPOOL_USE_LIBRARY
-#define THREADPOOL_USE_LIBRARY 0 /// 1 -> use library, 0 -> header-only
+#define THREADPOOL_USE_LIBRARY 1 /// 1 -> use library, 0 -> header-only
 #endif
 
 #endif // !defined(THREADPOOL_CONFIG_H)

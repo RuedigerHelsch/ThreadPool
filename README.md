@@ -437,7 +437,7 @@ Iterators from functions {#Iterators}
 Sometimes an algorithm might look useful, but the data are not
 available in Iterator form. Maybe the values are returned from a
 function. Maybe it is possible to write a small Lambda function to
-return the values. Or maybe the output values shall be passed of to
+return the values. Or maybe the output values shall be passed off to
 the function. In this case you can convert the function to an
 iterator. The header `make_iterator.h` contains two functions
 make_function_input_range() and make_function_output_iterator() that
@@ -571,7 +571,7 @@ Exceptions {#Exceptions}
 ----------
 
 If a task running under the thread pool throws an exception, the
-remaining tasks that have not yet started are flushed and the tasks
+remaining tasks that have not yet started are flushed and the threads
 return. The thread pool ends up unusable but destroyable. On the next
 wait(), or at the time the thread pool is destructed, the exception is
 re-raised in the thread calling wait() or destroying the thread pool.
