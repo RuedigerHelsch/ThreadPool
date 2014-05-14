@@ -61,7 +61,9 @@ gitcommit::
 	git commit -a -m "Daily checkin"
 
 gitpush::
-	git push -u origin master
+	git commit -a -m "Daily checkin"
+	make dist
+	cd $(DIST) && git commit -a -m "Daily checkin" && git push -u origin master
 #
 ###############################################################################
 #
