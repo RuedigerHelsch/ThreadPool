@@ -21,7 +21,7 @@ Contents
 
 
 
-Introduction {#Introduction}
+Introduction <a name="Introduction"></a>
 ------------
 
 This is a threadpool for C++11.
@@ -52,7 +52,7 @@ run() tasks in it](#threadpool0).
 
 
 
-Installation {#Installation}
+Installation <a name="Installation"></a>
 ------------
 
 Unpack the distribution to a directory on your local machine. You can
@@ -67,7 +67,7 @@ through their standard names `"threadpool/xxx.h"`.
 
 
 
-Usage {#Usage}
+Usage <a name="Usage"></a>
 -----
 
 In order to use the thread pool, the proper header has to be
@@ -122,7 +122,7 @@ would be:
 
 
 
-Parallel for_each() {#parallel_for_each}
+Parallel for_each() <a name="parallel_for_each"></a>
 -------------------
 
 The C++ standard library contains an algorithms std::for_each(). The
@@ -213,7 +213,7 @@ into the two vectors.
 
 
 
-Parallel transform() {#parallel_transform}
+Parallel transform() <a name="parallel_transform"></a>
 --------------------
 
 The C++ standard library contains an algorithms std::transform(). The
@@ -312,7 +312,7 @@ multiplication. The results are pushed into the list `l` in sequence.
 
 
 
-ThreadPool {#threadpool0}
+ThreadPool <a name="threadpool0"></a>
 ----------
 
 The parallel agorithms create a thread pool internally. In order to
@@ -431,7 +431,7 @@ Now the loop index is passed by value, and everything works.
 
 
 
-Iterators from functions {#Iterators}
+Iterators from functions <a name="Iterators"></a>
 ------------------------
 
 Sometimes an algorithm might look useful, but the data are not
@@ -584,7 +584,7 @@ pool and returned through the `std::future`. See an example in the
 
 
 
-Performance {#Performance}
+Performance <a name="Performance"></a>
 -----------
 
 
@@ -649,7 +649,7 @@ threads.
 
 
 
-Creating a Library {#Library}
+Creating a Library <a name="Library"></a>
 ------------------
 
 The thread pool is pre configured for header-only use. This means:
@@ -673,7 +673,7 @@ should fail with missing externals.
 
 
 
-Single-threaded Version of the Threadpool API {#Singlethreaded}
+Single-threaded Version of the Threadpool API <a name="Singlethreaded"></a>
 ---------------------------------------------
 
 For use on systems without multithreading support, and for use during
@@ -713,7 +713,7 @@ this:
 
 
 
-Compatibility {#Compatibility}
+Compatibility <a name="Compatibility"></a>
 -------------
 
 The threadpool has been tested with:
@@ -725,7 +725,7 @@ The threadpool has been tested with:
 
 
 
-License {#License}
+License <a name="License"></a>
 -------
 
 Copyright (c) 2014 Ruediger Helsch; All rights reserved
