@@ -4,8 +4,8 @@
  *
  * @copyright	2014 Ruediger Helsch, Ruediger.Helsch@t-online.de
  * @license	All rights reserved. Use however you want. No warranty at all.
- * $Revision: 1.8 $
- * $Date: 2014/05/14 14:06:42 $
+ * $Revision: 2.0 $
+ * $Date: 2014/05/14 16:56:59 $
  */
 #define BOOST_TEST_MODULE threadpool_test
 #include <vector>

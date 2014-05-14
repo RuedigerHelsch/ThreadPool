@@ -92,7 +92,7 @@ the compiler option `-I/path/to/threadpool/include`, this reduces to:
 ~~~
 
 The thread pool objects and functions are exported through namespace
-`threadpool` with sub-namespace `parallel`. In the examples here I
+`threadpool` with sub-namespace `parallel`.  In the examples here I
 always use the fully qualified names. They are:
 
 ~~~{.cpp}

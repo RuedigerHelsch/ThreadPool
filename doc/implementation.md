@@ -18,7 +18,7 @@ Directory structure
 - *examples*: Directory `examples` containst small self-standing
    example programs.
 
-To create the library, run `make` in the top-level directory. Run
+To create the library, run `make` in the top-level directory.  Run
 `make test` to run the test suite, `make examples` to create the
 examples. The compiler to use and its flags are configured in
 `Makefile.template` in the top-level directory.

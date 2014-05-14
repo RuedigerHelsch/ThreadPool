@@ -74,7 +74,7 @@ CVSFILTER = find . \! -type l \
 	| sed -e '/.png$$/d' -e '/.mini.js$$/d' -e '/.o$$/d' -e '/.a$$/d' -e '/.rpo$$/d' -e '/.exe$$/d' \
 	-e '/.log$$/d' -e '/.bak$$/d' -e '/.old$$/d' -e '/.ok$$/d' -e '/\/moc_[^\/]*.cpp$$/d' -e '/~$$/d' \
 	-e '/\/gmon.out$$/d' -e '/\/core$$/d' -e '/\/Makefile.depend$$/d' \
-	-e '/\/TAGS$$/d' -e '/\/CVS$$/d' -e '/\/CVS\//d' -e 's/^\.\///' \
+	-e '/\/TAGS$$/d' -e '/\/CVS$$/d' -e '/\/CVS\//d' -e '/\/\.git$$/d'  -e '/\/\.git\//d' -e 's/^\.\///' \
 	| xargs -L 1 cvs diff --brief 2>&1 \
 	| sed \
 	    -e 's/^cvs diff: in directory `/cvs diff: I know nothing about /' \
@@ -101,5 +101,6 @@ cvsremove::
 cvsbuilddb::
 	mkdir $(CVSROOT)
 	$(CVS) init
+	cp .cvsignore $(CVSROOT)/CVSROOT/cvsignore
 	$(CVS) import -m x src x y
-	d=../src-`date '+%F-%H-%M-%S'` && mkdir $$d && mv * $$d && cd .. && $(CVS) checkout src
+	d=../src-`date '+%F-%H-%M-%S'` && mkdir $$d && mv * .cvsignore .gitignore $$d && cd .. && $(CVS) checkout src
