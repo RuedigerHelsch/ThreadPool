@@ -59,8 +59,8 @@ Unpack the distribution to a directory on your local machine. You can
 include the proper header in subdirectory `include/threadpool` from
 your program. To make inclusion of the headers easier, it is
 recommended to add the subdirectory `include` to the include file
-search path of the compiler. This is commonly achieved with the option
-`-I/path/to/threadpool/include` (assuming that the threadpool
+search path of the compiler.  This is commonly achieved with the
+option `-I/path/to/threadpool/include` (assuming that the threadpool
 distribution has been upacked to directory
 `/path/to/threadpool`). Then you can include the thread pool headers
 through their standard names `"threadpool/xxx.h"`.
