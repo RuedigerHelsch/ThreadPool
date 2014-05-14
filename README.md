@@ -412,7 +412,7 @@ clause. The following for example would be invalid:
 ~~~
 
 In this broken example the loop index `i` is passed by reference. But
-if the lambda function is run later on, `i` will already have been
+when the lambda function is run later on, `i` will already have been
 incremented! Still worse, the `for` loop will have been finished, and
 the location of the loop index `i` will not be valid, may even contain
 something completely different!
