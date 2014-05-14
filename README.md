@@ -567,7 +567,7 @@ iterator `ot`, which writes the numbers to the standard output.
 
 
 
-Exceptions {#Exceptions}
+Exceptions <a name="Exceptions"></a>
 ----------
 
 If a task running under the thread pool throws an exception, the
