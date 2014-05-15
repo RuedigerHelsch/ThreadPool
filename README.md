@@ -106,7 +106,7 @@ always use the fully qualified names. They are:
 The thread pool is pre-configured for header-only use. This means:
 Just include the proper header and you are done. In order to reduce
 space overhead and compilation time, a precompiled library can be
-used. See section [Creating a Library](#library).
+used. See section [Creating a Library](#Library).
 
 You may need to link the thread pool against a thread library. For
 example on Linux systems this would be the library `-lpthread`. In the
@@ -125,7 +125,7 @@ would be:
 Parallel for_each() <a name="parallel_for_each"></a>
 -------------------
 
-The C++ standard library contains an algorithms std::for_each(). The
+The C++ standard library contains an algorithm std::for_each(). The
 threadpool implementation parallel::for_each() uses the same function
 call interface:
 
@@ -344,7 +344,7 @@ Note that it is generally a bad idea to modify any objects
 concurrently from multiple threads, for example to try to append
 things to a container concurrently. The standard output streams are an
 exception, the standard does explicitly guarantee that the integrity
-of the stream objects is preserved. Of cause the output might be
+of the stream objects is preserved. of course the output might be
 mangled.
 
 Functions to be queued with run() must be callable with no
