@@ -1,4 +1,4 @@
-ThreadPool for C++11	{#index}
+ThreadPool for C++11
 ====================
 
 Contents

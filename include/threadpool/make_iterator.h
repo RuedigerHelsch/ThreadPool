@@ -4,8 +4,8 @@
  *
  * @copyright	2014 Ruediger Helsch, Ruediger.Helsch@t-online.de
  * @license	All rights reserved. Use however you want. No warranty at all.
- * $Revision: 2.0 $
- * $Date: 2014/05/14 16:56:58 $
+ * $Revision: 2.1 $
+ * $Date: 2014/05/15 23:55:22 $
  */
 #ifndef THREADPOOL_MAKE_ITERATOR_H
 #define THREADPOOL_MAKE_ITERATOR_H
@@ -64,11 +64,7 @@ namespace ThreadPoolImpl {
 	public:
 	    ref_value() { }
 	    ref_value(T x) : value(&x) { }
-	    ref_value(const ref_value&) = default;
-	    ref_value(ref_value&&) = default;
 	    ref_value& operator=(T x) { value = &x; return *this; }
-	    ref_value& operator=(const ref_value&) = default;
-	    ref_value& operator=(ref_value&&) = default;
 	    T get() const { return *value; }
 	    T move() { return *value; }
 	};
@@ -79,15 +75,42 @@ namespace ThreadPoolImpl {
 	public:
 	    ref_value() { }
 	    ref_value(T x) : value(&x) { }
-	    ref_value(const ref_value&) = default;
-	    ref_value(ref_value&&) = default;
 	    ref_value& operator=(T x) { value = &x; return *this; }
-	    ref_value& operator=(const ref_value&) = default;
-	    ref_value& operator=(ref_value&&) = default;
 	    const T& get() const { return std::move(*value); }
 	    T move() { return std::move(*value); }
 	};
 
+
+	/**
+	 * Wrap a function in a pointer.
+	 *
+	 * Keep R-values through a shared_ptr to the std::move()d object.
+	 * Keep L-values through a simple pointer.
+	 *
+	 * Note that template parameter `Function` here has any
+	 * rvalue reference stripped. Only the lvalue reference is
+	 * remaining.
+	 */
+	template<class Function, class Enable = void>
+	class FunctionPtr;
+
+	template<class Function>
+	class FunctionPtr<Function,
+			  typename std::enable_if<!std::is_reference<Function>::value>::type> {
+	    std::shared_ptr<Function> fun;
+	public:
+	    explicit FunctionPtr(Function&& fun) : fun(new Function(std::forward<Function>(fun))) { }
+	    Function& operator*() { return *fun; }
+	};
+
+	template<class Function>
+	class FunctionPtr<Function,
+			  typename std::enable_if< std::is_reference<Function>::value>::type> {
+	    typename std::add_pointer<Function>::type fun;
+	public:
+	    explicit FunctionPtr(Function& fun) : fun(&fun) { }
+	    Function& operator*() { return *fun; }
+	};
 
 
 	/**
@@ -120,10 +143,9 @@ namespace ThreadPoolImpl {
 	    struct Values {
 		bool last = false;
 		bool value_valid = false;
-		Function fun;
+		FunctionPtr<Function> fun;
 		ref_value<typename Base::value_type> value;
-		Values(const Function& fun) : fun(fun) { }
-		Values(Function&& fun) : fun(std::forward<Function>(fun)) { }
+		explicit Values(FunctionPtr<Function>& fun) : fun(fun) { }
 		Values(const Values& x) = default;
 	    };
 
@@ -132,12 +154,7 @@ namespace ThreadPoolImpl {
 	public:
 
 	    FunctionInputIterator() = default;
-	    FunctionInputIterator(const Function& fun) : v(new Values(fun)) { }
-	    FunctionInputIterator(Function&& fun, bool last = false) : v(new Values(std::forward<Function>(fun))) { }
-	    FunctionInputIterator(const FunctionInputIterator&) = default;
-	    FunctionInputIterator(FunctionInputIterator&&) = default;
-	    FunctionInputIterator& operator=(const FunctionInputIterator& x) = default;
-	    FunctionInputIterator& operator=(FunctionInputIterator&&) = default;
+	    explicit FunctionInputIterator(FunctionPtr<Function>& fun) : v(new Values(fun)) { }
 	    FunctionInputIterator& operator++() { return *this; }
 	    FunctionInputIterator& operator++(int) { return *this; }
 
@@ -148,7 +165,7 @@ namespace ThreadPoolImpl {
 		    v->value_valid = false;
 		} else if (!v->last) {
 		    try {
-			v->value = v->fun();
+			v->value = (*v->fun)();
 		    } catch (std::out_of_range) {
 			v->last = true;
 		    }
@@ -164,7 +181,7 @@ namespace ThreadPoolImpl {
 
 		if (v != nullptr && !(v->last || v->value_valid)) {
 		    try {
-			v->value = v->fun();
+			v->value = (*v->fun)();
 			v->value_valid = true;
 		    } catch (std::out_of_range) {
 			v->last = true;
@@ -204,17 +221,12 @@ namespace ThreadPoolImpl {
 	template<class Function>
 	class FunctionInputIteratorRange {
 
-	    std::shared_ptr<Function> fun;
+	    FunctionPtr<Function> fun;
 
 	public:
 
-	    FunctionInputIteratorRange(const Function& fun) : fun(new Function(fun)) { }
-	    FunctionInputIteratorRange(Function&& fun) : fun(new Function(std::forward<Function>(fun))) { }
-	    FunctionInputIteratorRange(const FunctionInputIteratorRange&) = default;
-	    FunctionInputIteratorRange(FunctionInputIteratorRange&&) = default;
-	    FunctionInputIteratorRange& operator=(const FunctionInputIteratorRange&) = default;
-	    FunctionInputIteratorRange& operator=(FunctionInputIteratorRange&&) = default;
-	    FunctionInputIterator<Function> begin() { return FunctionInputIterator<Function>(*fun.get()); }
+	    template <class Fun> explicit FunctionInputIteratorRange(Fun&& fun) : fun(std::forward<Fun>(fun)) { }
+	    FunctionInputIterator<Function> begin() { return FunctionInputIterator<Function>(fun); }
 	    FunctionInputIterator<Function> end() { return FunctionInputIterator<Function>(); }
 	};
 
@@ -233,20 +245,14 @@ namespace ThreadPoolImpl {
 	class FunctionOutputIterator
 	    : public std::iterator<std::output_iterator_tag, void, void, void, void> {
 
-	    std::shared_ptr<Function> fun;
+	    FunctionPtr<Function> fun;
 
 	public:
-	    FunctionOutputIterator() { }
-	    FunctionOutputIterator(const Function& fun) : fun(new Function(fun)) { }
-	    FunctionOutputIterator(Function&& fun) : fun(new Function(std::move(fun))) { }
-	    FunctionOutputIterator(const FunctionOutputIterator&) = default;
-	    FunctionOutputIterator(FunctionOutputIterator&&) = default;
-	    FunctionOutputIterator& operator=(const FunctionOutputIterator&) = default;
-	    FunctionOutputIterator& operator=(FunctionOutputIterator&&) = default;
+	    template<class Fun> explicit FunctionOutputIterator(Fun&& fun) : fun(std::forward<Fun>(fun)) { }
 	    FunctionOutputIterator& operator++() { return *this; }
 	    FunctionOutputIterator& operator++(int) { return *this; }
 	    FunctionOutputIterator& operator*() { return *this; }
-	    template<class Arg> void operator=(Arg&& arg) { (*fun.get())(std::forward<Arg>(arg)); }
+	    template<class Arg> void operator=(Arg&& arg) { (*fun)(std::forward<Arg>(arg)); }
 	};
 
 
@@ -263,6 +269,19 @@ namespace threadpool {
 
     /**
      * Create an input range from a function
+     *
+     * @param fun
+     *		The function must be callable with no arguments and
+     *		must return the values. The type of the return value
+     *		of the function will become the `value_type` of the
+     *		input iterator.
+     *
+     * @returns
+     *		The input range. The input range has two member
+     *		functions begin() and end() which return iterators
+     *		that can be used as `first` and `last` value of
+     *		algorithms. The range itself can be used like a
+     *		container.
      */
     template<class Function>
     ThreadPoolImpl::impl::FunctionInputIteratorRange<Function>
@@ -272,6 +291,14 @@ namespace threadpool {
 
     /**
      * Create an output iterator from a function
+     *
+     * @param fun
+     *		The function must be callable with one argument. This
+     *		argument will receive the value assigned to the output
+     *		iterator.
+     *
+     * @returns
+     *		The output iterator.
      */
     template<class Function>
     ThreadPoolImpl::impl::FunctionOutputIterator<Function>

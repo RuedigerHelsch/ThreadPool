@@ -4,8 +4,8 @@
  *
  * @copyright	2014 Ruediger Helsch, Ruediger.Helsch@t-online.de
  * @license	All rights reserved. Use however you want. No warranty at all.
- * $Revision: 2.0 $
- * $Date: 2014/05/14 16:56:59 $
+ * $Revision: 2.1 $
+ * $Date: 2014/05/15 23:55:22 $
  */
 #define BOOST_TEST_MODULE threadpool_test
 #include <vector>
@@ -377,6 +377,42 @@ namespace threadpool_test {
 				  [](int i) -> int {
 				      return 3 * i;
 				  });
+	    CONTAINER_CHECK_EQUAL(b, ({6,12,18,24,30,36,42,48,54}));
+	}
+	{ // Multithreaded transform, iterators from l-value references
+	    std::vector<int> a;
+	    for (int i: threadpool::make_function_input_range([]() -> int {
+			static int u = 1;
+			if (u == 10)
+			    throw std::out_of_range("");
+			return u++;
+		    }))
+		a.push_back(i);
+	    CONTAINER_CHECK_EQUAL(a, ({1,2,3,4,5,6,7,8,9}));
+	    std::list<int> b;
+
+	    auto ifun = [&a]() -> int {
+		static unsigned int u = 0;
+		if (u == a.size())
+		    throw std::out_of_range("a");
+		return a[u++];
+	    };
+
+	    auto ofun = [&b](int i) {
+		b.push_back(2 * i);
+	    };
+
+	    auto tfun = [](int i) -> int {
+		return 3 * i;
+	    };
+
+	    C::parallel_transform(
+				  // Input iterator reads values from array a
+				  threadpool::make_function_input_range(ifun),
+				  // Output iterator pushes doubled values to array b
+				  threadpool::make_function_output_iterator(ofun),
+				  // Computation function multiplies by 3
+				  tfun);
 	    CONTAINER_CHECK_EQUAL(b, ({6,12,18,24,30,36,42,48,54}));
 	}
 	{ // Timing for random access iterators

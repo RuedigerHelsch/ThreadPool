@@ -767,7 +767,8 @@ INPUT_FILTER           =
 # non of the patterns match the file name, INPUT_FILTER is applied.
 
 FILTER_PATTERNS        = *.js=js2doxy \
-                         *.php=php2doxy
+                         *.php=php2doxy \
+			 "*.md=\"sed -e '1s/^ThreadPool for C++11$/& {#index}/'\""
 
 # If the FILTER_SOURCE_FILES tag is set to YES, the input filter (if set using
 # INPUT_FILTER) will be used to filter the input files when producing source

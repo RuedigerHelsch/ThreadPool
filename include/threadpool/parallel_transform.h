@@ -4,8 +4,8 @@
  *
  * @copyright	2014 Ruediger Helsch, Ruediger.Helsch@t-online.de
  * @license	All rights reserved. Use however you want. No warranty at all.
- * $Revision: 2.0 $
- * $Date: 2014/05/14 16:56:58 $
+ * $Revision: 2.1 $
+ * $Date: 2014/05/16 08:24:36 $
  */
 #ifndef PARALLEL_TRANSFORM_H
 #define PARALLEL_TRANSFORM_H
@@ -171,7 +171,7 @@ namespace ThreadPoolImpl {
 			if (output_counter == ctr) {
 			    // Predecessor is done, we can store our things.
 			    lock.unlock();
-			    *result = results->result;
+			    *result = std::move(results->result);
 			    ++result;
 			    ++ctr;
 			    lock.lock();
@@ -179,7 +179,7 @@ namespace ThreadPoolImpl {
 			    while (results->next) {
 				results = std::move(results->next);
 				lock.unlock();
-				*result = results->result;
+				*result = std::move(results->result);
 				++result;
 				++ctr;
 				lock.lock();
